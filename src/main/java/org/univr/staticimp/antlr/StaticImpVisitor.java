@@ -1,4 +1,4 @@
-// Generated from C:/Users/Samuele/Google Drive/pl-lab/lab05/ex/staticimp/src/main/resources\StaticImp.g4 by ANTLR 4.7
+// Generated from /Users/nicola/Desktop/staticimp/src/main/resources/StaticImp.g4 by ANTLR 4.7.2
 package org.univr.staticimp.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -24,6 +24,20 @@ public interface StaticImpVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDecl(StaticImpParser.DeclContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code nd}
+	 * labeled alternative in {@link StaticImpParser#com}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNd(StaticImpParser.NdContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code for}
+	 * labeled alternative in {@link StaticImpParser#com}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFor(StaticImpParser.ForContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code skip}
 	 * labeled alternative in {@link StaticImpParser#com}.
 	 * @param ctx the parse tree
@@ -44,6 +58,13 @@ public interface StaticImpVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIf(StaticImpParser.IfContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code do_while}
+	 * labeled alternative in {@link StaticImpParser#com}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDo_while(StaticImpParser.Do_whileContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code seq}
 	 * labeled alternative in {@link StaticImpParser#com}.

@@ -5,6 +5,9 @@ import org.univr.staticimp.antlr.StaticImpParser;
 import org.univr.staticimp.value.*;
 import org.univr.staticimp.value.Value;
 
+import java.util.List;
+import java.util.Random;
+
 public class DynamicIntImp extends StaticImpBaseVisitor<Value> {
 
     private final DynamicConf conf;
@@ -81,9 +84,18 @@ public class DynamicIntImp extends StaticImpBaseVisitor<Value> {
 
     @Override
     public ComValue visitIf(StaticImpParser.IfContext ctx) {
-        return visitBoolExp(ctx.exp())
-                ? visitCom(ctx.com(0))
-                : visitCom(ctx.com(1));
+        List<StaticImpParser.ExpContext> exps = ctx.exp();
+
+        int i;
+        for(i = 0; i < exps.size(); i++) {
+            if(visitBoolExp(ctx.exp(i)))
+                return visitCom(ctx.com(i));
+        }
+
+        if(ctx.com(i) != null)
+            return visitCom(ctx.com(i));
+        else
+            return ComValue.INSTANCE;
     }
 
     @Override
@@ -185,5 +197,35 @@ public class DynamicIntImp extends StaticImpBaseVisitor<Value> {
     @Override
     public ExpValue<?> visitId(StaticImpParser.IdContext ctx) {
         return conf.get(ctx.ID().getText());
+    }
+
+    @Override
+    public Value visitNd(StaticImpParser.NdContext ctx) {
+        Random random = new Random();
+
+        if(random.nextBoolean())
+            return visit(ctx.com(0));
+        else
+            return visit(ctx.com(1));
+    }
+
+    @Override
+    public Value visitFor(StaticImpParser.ForContext ctx) {
+        visit(ctx.com(0));
+        while(visitBoolExp(ctx.exp())) {
+            visit(ctx.com(2));
+            visit(ctx.com(1));
+        }
+
+        return ComValue.INSTANCE;
+    }
+
+    @Override
+    public Value visitDo_while(StaticImpParser.Do_whileContext ctx) {
+        visit(ctx.com());
+        if (!visitBoolExp(ctx.exp()))
+            return ComValue.INSTANCE;
+
+        return visitCom(ctx);
     }
 }

@@ -2,13 +2,16 @@ grammar StaticImp;
 
 prog : com EOF ;
 
-com : SKIPP                                                             # skip
-    | type=(TNAT | TBOOL) ID                                            # decl
-    | ID ASSIGN exp                                                     # assign
-    | OUT LPAR exp RPAR                                                 # out
-    | WHILE LPAR exp RPAR LBRACE com RBRACE                             # while
-    | com SEMICOLON com                                                 # seq
-    | IF LPAR exp RPAR THEN LBRACE com RBRACE ELSE LBRACE com RBRACE    # if
+com : SKIPP                                                                                                             # skip
+    | type=(TNAT | TBOOL) ID                                                                                            # decl
+    | ID ASSIGN exp                                                                                                     # assign
+    | OUT LPAR exp RPAR                                                                                                 # out
+    | WHILE LPAR exp RPAR LBRACE com RBRACE                                                                             # while
+    | com SEMICOLON com                                                                                                 # seq
+    | IF LPAR exp RPAR THEN LBRACE com RBRACE (ELSEIF LPAR exp RPAR LBRACE com RBRACE)* (ELSE LBRACE com RBRACE)?       # if
+    | FOR LPAR com SEMICOLON exp SEMICOLON com RPAR LBRACE com RBRACE                                                   # for
+    | DO LBRACE com RBRACE WHILE LPAR exp RPAR                                                                          # do_while
+    | ND LPAR com COMMA com RPAR                                                                                        # nd
     ;
 
 exp : NAT                                 # nat
@@ -49,18 +52,23 @@ GT  : '>' ;
 NOT : '!' ;
 
 IF     : 'if' ;
+ELSEIF : 'elseif' ;
 THEN   : 'then' ;
 ELSE   : 'else' ;
 WHILE  : 'while' ;
+DO     : 'do' ;
 SKIPP  : 'skip' ;
 ASSIGN : '=' ;
 OUT    : 'out' ;
+FOR    : 'for' ;
+ND     : 'nd' ;
 
 LPAR      : '(' ;
 RPAR      : ')';
 LBRACE    : '{' ;
 RBRACE    : '}' ;
 SEMICOLON : ';' ;
+COMMA     : ',' ;
 
 ID : [a-z]+ ;
 

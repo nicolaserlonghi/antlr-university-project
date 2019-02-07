@@ -4,6 +4,8 @@ import org.univr.staticimp.antlr.StaticImpBaseVisitor;
 import org.univr.staticimp.antlr.StaticImpParser;
 import org.univr.staticimp.type.*;
 
+import java.util.List;
+
 public class StaticIntImp extends StaticImpBaseVisitor<Type> {
 
     private final StaticConf conf;
@@ -125,9 +127,15 @@ public class StaticIntImp extends StaticImpBaseVisitor<Type> {
 
     @Override
     public ComType visitIf(StaticImpParser.IfContext ctx) {
-        visitBoolExp(ctx.exp());
-        visit(ctx.com(0));
-        visit(ctx.com(1));
+        List<StaticImpParser.ExpContext> exps = ctx.exp();
+        for(StaticImpParser.ExpContext exp : exps) {
+            visitBoolExp(exp);
+        }
+
+        List<StaticImpParser.ComContext> coms = ctx.com();
+        for(StaticImpParser.ComContext com : coms) {
+            visit(com);
+        }
 
         return ComType.INSTANCE;
     }
@@ -220,5 +228,35 @@ public class StaticIntImp extends StaticImpBaseVisitor<Type> {
         }
 
         return conf.get(id);
+    }
+
+    @Override
+    public Type visitNd(StaticImpParser.NdContext ctx) {
+        visit(ctx.com(0));
+        visit(ctx.com(1));
+
+        return ComType.INSTANCE;
+    }
+
+    @Override
+    public Type visitFor(StaticImpParser.ForContext ctx) {
+        // Controllo che l'assegnamento del for sia corretto
+        if(ctx.com(0).getClass() != StaticImpParser.AssignContext.class) {
+            throw new StaticSemanticsException();
+        }
+        visit(ctx.com(0));
+        visitBoolExp(ctx.exp());
+        visit(ctx.com(2));
+        visit(ctx.com(1));
+
+        return ComType.INSTANCE;
+    }
+
+    @Override
+    public Type visitDo_while(StaticImpParser.Do_whileContext ctx) {
+        visit(ctx.com());
+        visitBoolExp(ctx.exp());
+
+        return ComType.INSTANCE;
     }
 }
